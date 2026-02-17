@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 import cors from "cors";
 import { fileURLToPath } from "url";
+console.log("DIRNAME:", __dirname);
 
 dotenv.config();
 
