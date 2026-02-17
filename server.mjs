@@ -6,10 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+// Serve frontend
 app.use(express.static("public"));
 
-
+// EXACT Render URL — no slash at the end
 const RENDER_URL = "https://ai-chatbotv6.onrender.com";
 
 app.post("/api/chat", async (req, res) => {
@@ -47,7 +47,6 @@ app.post("/api/chat", async (req, res) => {
     res.status(500).json({ reply: "Server error." });
   }
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
