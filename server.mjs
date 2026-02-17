@@ -49,7 +49,7 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const data = await response.json();
-    console.log("RAW RESPONSE:", data);
+    console.log("FULL OPENROUTER RESPONSE:", JSON.stringify(data, null, 2)); 
 
     const reply =
       data.choices?.[0]?.message?.content ||
