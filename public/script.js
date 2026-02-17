@@ -1,5 +1,7 @@
-document.getElementById("sendBtn").addEventListener("click", async () => {
-  const input = document.getElementById("userInput");
+document.getElementById("sendBtn").addEventListener("click", async (e) => {
+  e.preventDefault(); // prevent form reload
+
+  const input = document.getElementById("user-input");
   const message = input.value.trim();
   if (!message) return;
 
@@ -22,7 +24,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
 });
 
 function addMessage(sender, text) {
-  const chat = document.getElementById("chat");
+  const chat = document.getElementById("chat-box");
   const div = document.createElement("div");
   div.className = sender;
   div.textContent = text;
