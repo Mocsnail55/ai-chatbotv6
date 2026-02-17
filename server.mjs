@@ -6,10 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend
+// Serve frontend files from /public
 app.use(express.static("public"));
 
-// EXACT Render URL — no slash at the end
+// MUST match your Render domain exactly (no trailing slash)
 const RENDER_URL = "https://ai-chatbotv6.onrender.com";
 
 app.post("/api/chat", async (req, res) => {
@@ -36,10 +36,11 @@ app.post("/api/chat", async (req, res) => {
     const data = await response.json();
     console.log("FULL OPENROUTER RESPONSE:", data);
 
-    const reply =
-      data?.choices?.[0]?.message?.content ||
-      "No response from model.";
+    if (!data.choices) {
+      return res.json({ reply: "Model returned no response." });
+    }
 
+    const reply = data.choices[0].message.content;
     res.json({ reply });
 
   } catch (err) {
@@ -48,5 +49,6 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
+// Render requires this
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
