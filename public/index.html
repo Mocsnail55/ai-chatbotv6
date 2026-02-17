@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div id="chat-container">
+      <div id="top-bar">
+        <select id="personality">
+          <option value="friendly">Friendly</option>
+          <option value="sarcastic">Sarcastic</option>
+          <option value="professional">Professional</option>
+          <option value="rude">Rude</option>
+          <option value="Vaas-montenegro">Vaas Montenegro</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <input
+          id="custom-personality"
+          type="text"
+          placeholder="Write your own personality..."
+          style="display: none"
+        />
+      </div>
+
+      <div id="chat-box"></div>
+
+      <form id="chat-form">
+        <input
+          id="user-input"
+          type="text"
+          placeholder="Type a message..."
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
