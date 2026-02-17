@@ -19,13 +19,15 @@ app.post("/api/chat", async (req, res) => {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENROUTER_KEY}`,
-        "HTTP-Referer": RENDER_URL,
-        "X-Title": "MaxChatbot"
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${process.env.OPENROUTER_KEY}`,
+  "HTTP-Referer": RENDER_URL,
+  "Referer": RENDER_URL,
+  "X-Title": "MaxChatbot"
+
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o-mini",
+        model: "openai/gpt-4o",
         messages: [
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: userMessage }
