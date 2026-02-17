@@ -6,10 +6,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend files
+
 app.use(express.static("public"));
 
-const RENDER_URL = "https://ai-chatbotv6.onrender.com"; // replace if different
+
+const RENDER_URL = "https://ai-chatbotv6.onrender.com";
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
@@ -35,7 +36,10 @@ app.post("/api/chat", async (req, res) => {
     const data = await response.json();
     console.log("FULL OPENROUTER RESPONSE:", data);
 
-    const reply = data?.choices?.[0]?.message?.content || "No response from model.";
+    const reply =
+      data?.choices?.[0]?.message?.content ||
+      "No response from model.";
+
     res.json({ reply });
 
   } catch (err) {
@@ -43,6 +47,7 @@ app.post("/api/chat", async (req, res) => {
     res.status(500).json({ reply: "Server error." });
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
