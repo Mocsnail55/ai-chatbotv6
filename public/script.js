@@ -1,47 +1,47 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("chat-form");
-  const input = document.getElementById("user-input");
-  const chatBox = document.getElementById("chat-box");
-  const personalitySelect = document.getElementById("personality");
+import express from "express";
+import fetch from "node-fetch";
+import cors from "cors";
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-    const message = input.value.trim();
-    const personality = personalitySelect.value;
+app.post("/api/chat", async (req, res) => {
+  const userMessage = req.body.message;
 
-    if (!message) return;
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENROUTER_KEY}`,
+        "HTTP-Referer": "https://your-render-url.onrender.com",
+        "X-Title": "MaxChatbot"
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: userMessage }
+        ]
+      })
+    });
 
-    addMessage("You", message);
-    input.value = "";
+    const data = await response.json();
 
-    try {
+    console.log("FULL OPENROUTER RESPONSE:", data);
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, personality })
-      });
-
-      if (!response.ok) {
-        addMessage("Bot", "Server error — try again");
-        return;
-      }
-
-      const data = await response.json();
-
-      addMessage("Bot", data.reply || "No response from model");
-    } catch (err) {
-      console.error("CLIENT ERROR:", err);
-      addMessage("Bot", "Error: could not reach server");
+    if (!data.choices || !data.choices[0]) {
+      return res.json({ reply: "No response from model." });
     }
-  });
 
-  function addMessage(sender, text) {
-    const div = document.createElement("div");
-    div.className = "message";
-    div.innerHTML = `<strong>${sender}:</strong> ${text}`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    const reply = data.choices[0].message.content;
+    res.json({ reply });
+
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
+    res.status(500).json({ reply: "Server error." });
   }
 });
+
+app.listen(3000, () => console.log("Server running on port 3000"));
