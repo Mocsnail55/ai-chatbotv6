@@ -6,8 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Replace this with your actual Render URL
-const RENDER_URL = "https://ai-chatbotv6.onrender.com";
+// Serve frontend files
+app.use(express.static("public"));
+
+const RENDER_URL = "https://ai-chatbotv6.onrender.com"; // replace if different
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
@@ -33,10 +35,7 @@ app.post("/api/chat", async (req, res) => {
     const data = await response.json();
     console.log("FULL OPENROUTER RESPONSE:", data);
 
-    const reply =
-      data?.choices?.[0]?.message?.content ||
-      "No response from model.";
-
+    const reply = data?.choices?.[0]?.message?.content || "No response from model.";
     res.json({ reply });
 
   } catch (err) {
