@@ -29,7 +29,16 @@ app.post("/api/chat", async (req, res) => {
       }
     );
 
-    const result = await response.json();
+    // If HF returns plain text like "Not Found", this prevents JSON crash
+    const text = await response.text();
+
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      console.error("HF returned non‑JSON:", text);
+      return res.json({ reply: "Model returned no response." });
+    }
 
     const reply =
       result?.generated_text ||
