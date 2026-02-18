@@ -9,13 +9,13 @@ app.use(express.json());
 app.use(express.static("public"));
 
 const HF_TOKEN = process.env.HF_TOKEN;
-const HF_MODEL = "meta-llama/Llama-3.2-1B-Instruct"; // change if needed
+const HF_MODEL = "meta-llama/Llama-3.2-1B-Instruct"; // your model
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
-    const response = await fetch("https://router.huggingface.co/v1/chat/completions", {
+    const response = await fetch("https://router.huggingface.co/inference", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${HF_TOKEN}`,
@@ -23,17 +23,15 @@ app.post("/api/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: HF_MODEL,
-        messages: [
-          { role: "user", content: userMessage }
-        ],
-        max_tokens: 200
+        input: userMessage
       })
     });
 
     const result = await response.json();
 
     const reply =
-      result?.choices?.[0]?.message?.content ||
+      result?.generated_text ||
+      result?.output_text ||
       "Model returned no response.";
 
     res.json({ reply });
