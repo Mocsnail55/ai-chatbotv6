@@ -15,25 +15,25 @@ app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
-    const response = await fetch(
-      `https://router.huggingface.co/models/${HF_MODEL}`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${HF_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          inputs: userMessage
-        })
-      }
-    );
+    const response = await fetch("https://router.huggingface.co/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${HF_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: HF_MODEL,
+        messages: [
+          { role: "user", content: userMessage }
+        ],
+        max_tokens: 200
+      })
+    });
 
     const result = await response.json();
 
-    // Hugging Face router returns an array with generated_text
     const reply =
-      result?.[0]?.generated_text ||
+      result?.choices?.[0]?.message?.content ||
       "Model returned no response.";
 
     res.json({ reply });
