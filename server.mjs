@@ -7,7 +7,9 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-
+// ------------------------------
+//  API ROUTE
+// ------------------------------
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
   const HF_TOKEN = process.env.HF_TOKEN;
@@ -50,7 +52,7 @@ app.use(express.static("public"));
 // ------------------------------
 //  START SERVER (RENDER REQUIRES THIS)
 // ------------------------------
-const PORT = process.env.PORT;   // NO FALLBACK
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
