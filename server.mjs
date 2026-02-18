@@ -6,13 +6,12 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(express.static("public"));
 
-const HF_TOKEN = process.env.HF_TOKEN;
-const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3";
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
+  const HF_TOKEN = process.env.HF_TOKEN;
+  const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3";
 
   try {
     const response = await fetch(
@@ -25,16 +24,13 @@ app.post("/api/chat", async (req, res) => {
         },
         body: JSON.stringify({
           model: HF_MODEL,
-          messages: [
-            { role: "user", content: userMessage }
-          ],
+          messages: [{ role: "user", content: userMessage }],
           max_tokens: 200
         })
       }
     );
 
     const result = await response.json();
-
     const reply =
       result?.choices?.[0]?.message?.content ||
       "Model returned no response.";
@@ -46,10 +42,15 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
- 
+// ------------------------------
+//  STATIC FILES (AFTER API ROUTE)
+// ------------------------------
+app.use(express.static("public"));
 
-app.post("/api/chat", async (req, res) => {
-  res.json({ reply: "test" });
+// ------------------------------
+//  START SERVER (RENDER REQUIRES THIS)
+// ------------------------------
+const PORT = process.env.PORT;   // NO FALLBACK
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
