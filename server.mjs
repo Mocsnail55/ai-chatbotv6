@@ -9,14 +9,14 @@ app.use(express.json());
 app.use(express.static("public"));
 
 const HF_TOKEN = process.env.HF_TOKEN;
-const HF_MODEL = "meta-llama/Llama-3.2-1B-Instruct";
+const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3";
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
     const response = await fetch(
-      `https://router.huggingface.co/models/${HF_MODEL}`,
+      "https://router.huggingface.co/v1/chat/completions",
       {
         method: "POST",
         headers: {
@@ -24,25 +24,19 @@ app.post("/api/chat", async (req, res) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: userMessage
+          model: HF_MODEL,
+          messages: [
+            { role: "user", content: userMessage }
+          ],
+          max_tokens: 200
         })
       }
     );
 
-    // If HF returns plain text like "Not Found", this prevents JSON crash
-    const text = await response.text();
-
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch {
-      console.error("HF returned non‑JSON:", text);
-      return res.json({ reply: "Model returned no response." });
-    }
+    const result = await response.json();
 
     const reply =
-      result?.generated_text ||
-      result?.[0]?.generated_text ||
+      result?.choices?.[0]?.message?.content ||
       "Model returned no response.";
 
     res.json({ reply });
